@@ -7,7 +7,9 @@
             <creation-uuid>b0ea55bc-a513-47a9-96f5-be1c874d9339</creation-uuid>
             <make-project-type>0</make-project-type>
             <sourceEncoding>ISO-8859-1</sourceEncoding>
-            <make-dep-projects/>
+            <make-dep-projects>
+                <make-dep-project>C:/Users/Git/XC_GFX_Lib/GFX_Lib.X</make-dep-project>
+            </make-dep-projects>
             <sourceRootList/>
             <confList>
                 <confElem>
