@@ -1,7 +1,12 @@
 #include "RGB.h"
 
+#include <string.h>
+#include <stdlib.h>
+#include "../RGB_dsPIC33CH_Lib.X/mcc_generated_files/delay.h"
 #include "../RGB_dsPIC33CH_Lib.X/mcc_generated_files/pin_manager.h"
 #include "../../XC_GFX_Lib/GFX_Lib.X/GFX.h"
+#include "../../XC_GFX_Lib/GFX_Lib.X/Fonts.h"
+
 
 #define  RowA _LATA0
 #define  RowB _LATA1
@@ -16,14 +21,16 @@
 
 pixSwitch pixState;//enum for pixel on or off condition
 P6_Var P6V;
+_RGB RGB;
 
+struct FontArr fontInfo;
 
 volatile uint16_t screen_width;
 volatile uint16_t half_screen;
 
 //static int16_t i,j,k;
 //static uint8_t rowNo;
-static uint16_t iX,iBlk,iK,iY,iL;
+static uint16_t iX,iL;//,iBlk,iK,iY
 extern uint8_t txt[5];
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -256,10 +263,10 @@ void rowSelectUnConventional(uint8_t ch){
 
 ////////////////////////////////////////////////////////////////////////////////
 //CHAR conditioning and setting data to place into buffer from setPix function
-short GFXPutCharXY(short x,short y,char c,type t){
-static bool error;
-unsigned int i, bytes,dta_;
-unsigned short _x,_y,fx,fy,b;
+int8_t GFXPutCharXY(int8_t x,int8_t y,char c,type t){
+//static bool error;
+uint16_t bytes;//,i, dta_;
+uint8_t _x,_y,fx,b;//fy;
        c     = c & 0x7F;
        if(t == CHAR){
            clearPix();
@@ -294,7 +301,7 @@ unsigned short _x,_y,fx,fy,b;
 }
 ////////////////////////////////////////////////////////////////////////////////
 //string function
-short GFXWriteStringXY(short x,short y, char *string,type C_S,_RGB RGB){
+int8_t GFXWriteStringXY(int8_t x,int8_t y, char *string,type C_S,_RGB RGB){
 short w;
       //test the STRING to see if it is empty then set to black
 
@@ -325,9 +332,9 @@ void GFXGetCharInfo(char c){
 
 ////////////////////////////////////////////////////////////////////////////////
 //
-int GFXGetStringWidthN(char *string,unsigned short n){
-int w,j;
-short i = 0;
+int16_t GFXGetStringWidthN(char *string,uint8_t n){
+int16_t w;//,j;
+int8_t i = 0;
     w = 0;
     while(*string != 0){
         fontInfo.CharPosWorkingTable = (uint16_t)(*string - (short)fontInfo.FirstChar);
@@ -343,8 +350,8 @@ short i = 0;
 }
 ////////////////////////////////////////////////////////////////////////////////
 //character index of the pixel
-short CharIndexOfPixel(char *string, unsigned int pixel){
-unsigned short index = 0;
+int8_t CharIndexOfPixel(char *string, uint16_t pixel){
+uint8_t index = 0;
 
          while(1){
              if(pixel < GFXGetStringWidthN(string,index))return index;
@@ -354,8 +361,8 @@ unsigned short index = 0;
 ////////////////////////////////////////////////////////////////////////////////
 //Scrolling a message
 void ScrollMsg(char *msg){
-unsigned int msg_pixel_len, scroll_1,scroll_2,start_char,len;
-unsigned short first_char_width,i;
+uint16_t msg_pixel_len, scroll_1,scroll_2,start_char;//,len;
+uint8_t first_char_width,i;
 char temp_string[30];
 
      msg_pixel_len = strlen(msg);
@@ -373,19 +380,19 @@ char temp_string[30];
               clearPix();
               GFXWriteStringXY(-scroll_2,0,temp_string,0,RGB);
               if(scroll_1 == 0){
-                   Delay_ms(100);
+                   DELAY_milliseconds(100);
               }
-              else Delay_ms(100);
+              else DELAY_milliseconds(100);
               scroll_1++;
           }
      }
     // letter = 0;
-     oneShot = 0;
+    // oneShot = 0;
 }
 ////////////////////////////////////////////////////////////////////////////////
 //fill picture
 void fillPicture(const uint8_t *Pict){
-static unsigned int length,x,_x,fx,_fx,y,_y;
+static uint16_t x,_x,fx,y;//length,_fx,_y;
    _x = 0;
      for(y=0;y<32;y++){
        for(x = 0;x<4;x++){
@@ -425,7 +432,7 @@ unsigned int i,y;
 //Draw a line
 void DRAW_Line(unsigned int x0,unsigned int y0,unsigned int x1,unsigned int y1){
  int p,p0,x,y,k,Dx,Dy,steps;
- char *C;
+ //char *C;
   Dx = abs(x1-x0);
   Dy = abs(y1-y0);
 
@@ -455,22 +462,22 @@ void DRAW_Line(unsigned int x0,unsigned int y0,unsigned int x1,unsigned int y1){
 ////////////////////////////////////////////////////////////////////////////////
 //fill the top panel
 void fillTop(){
-    *memset(P6V.P_Vram, 0xFF, 1024);
+    memset(P6V.P_Vram, 0xFF, 1024);
 }
 ////////////////////////////////////////////////////////////////////////////////
 //fill bottom panel
 void fillBot(){
-    *memset(P6V.P_Vram + 1024, 0xFF, 1024);
+    memset(P6V.P_Vram + 1024, 0xFF, 1024);
 }
 ////////////////////////////////////////////////////////////////////////////////
 //fill buffer with 1's
 void fillPix(){
-     *memset(P6V.P_Vram, 0xFF, 2048); //total of 384 bytes for 3 screens 6x64=384
+     memset(P6V.P_Vram, 0xFF, 2048); //total of 384 bytes for 3 screens 6x64=384
 }
 ////////////////////////////////////////////////////////////////////////////////
 //fill buffer with 0's
 void clearPix(){
-     *memset(P6V.P_Vram, 0x00, 2048);
+     memset(P6V.P_Vram, 0x00, 2048);
 }
 ////////////////////////////////////////////////////////////////////////////////
 //set the pixel colour
@@ -486,8 +493,8 @@ int GetCol(){
 ////////////////////////////////////////////////////////////////////////////////
 //scrolls pixels for debug and pixel sequence turn off interrupts to check pix
 void runPixSeq(){
-static unsigned short Dat;
-static unsigned int iXX,Row,temp,Cnt;
+//static uint8_t Dat;
+static uint16_t iXX,Row,temp;//,Cnt;
 
 if(Row > 30){
      Row = 0;
@@ -516,7 +523,7 @@ if(Row > 30){
   }
   iXX++;
   latchLeds(temp);
-  Delay_ms(10);
+  DELAY_milliseconds(10);
 }
 ////////////////////////////////////////////////////////////////////////////////
 //string function

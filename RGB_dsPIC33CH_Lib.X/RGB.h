@@ -11,6 +11,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <xc.h>
+
 /////////////////////////////////////////////////
 //defines
 #define GFX_SCREEN_WIDTH  64
@@ -100,11 +101,11 @@ void rowSelectUnConventional(uint8_t ch);
 
 void GFXGetCharInfo(char c);
 void sortBuff();
-short GFXPutCharXY(short x,short y,char c, type t);
-short GFXWriteStringXY(short x,short y, char *string,type C_S,_RGB RGB);
+int8_t GFXPutCharXY(int8_t x,int8_t y,char c, type t);
+int8_t GFXWriteStringXY(int8_t x,int8_t y, char *string,type C_S,_RGB RGB);
 void GFXGetCharInfo(char c);
-int GFXGetStringWidthN( char *string,unsigned short n);
-short CharIndexOfPixel( char *string, unsigned int pixel);
+int16_t GFXGetStringWidthN( char *string,uint8_t n);
+int8_t CharIndexOfPixel( char *string, uint16_t pixel);
 void ScrollMsg(char *msg);
 void fillPicture(const uint8_t *Pict);
 void DRAW_Rect(unsigned int x0,unsigned int y0,unsigned int x1,unsigned int y1,type t);

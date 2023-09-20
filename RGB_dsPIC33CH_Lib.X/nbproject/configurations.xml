@@ -55,8 +55,6 @@
       </logicalFolder>
       <logicalFolder name="f1" displayName="RGB" projectFiles="true">
         <itemPath>RGB.c</itemPath>
-        <itemPath>Areal8x11.c</itemPath>
-        <itemPath>Fonts.c</itemPath>
       </logicalFolder>
       <itemPath>main.c</itemPath>
     </logicalFolder>
