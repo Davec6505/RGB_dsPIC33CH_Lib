@@ -77,6 +77,7 @@ extern bool oneShot;
 extern unsigned char Letter;
 ///////////////////////////////////////////////
 //function prototypes
+
 void initP10(uint8_t wide);
 void Int_Handler();
 void writeData(unsigned char Dat_T,unsigned char Dat_B);

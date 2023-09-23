@@ -5,11 +5,15 @@
  Section: File specific functions
 */
 void (*TMR1_InterruptHandler)(void) = NULL;
+void (*TMR1_RGB_Handler)(void) = NULL;
 void TMR1_CallBack(void);
 
 /**
   Section: Data Type Definitions
 */
+
+#define RGB_CLOCK 5
+
 typedef struct RTC{
     uint32_t millis;
     uint16_t ms;
@@ -22,6 +26,14 @@ static rtc T0 = {
     ,0
     ,0
     ,0
+};
+
+typedef struct RGB_VAR{
+    uint8_t cycle_tmr;
+}RGB_CYCLE;
+
+static RGB_CYCLE rgb_cyc={
+    0
 };
 /** TMR Driver Hardware Instance Object
 
@@ -51,7 +63,7 @@ static TMR_OBJ tmr1_obj;
   Section: Driver Interface
 */
 
-void TMR1_Initialize (void)
+void TMR1_Initialize ()
 {
     //TMR 0; 
     TMR1 = 0x00;
@@ -71,14 +83,24 @@ void TMR1_Initialize (void)
     tmr1_obj.timerElapsed = false;
 
 }
-
+void RGB_SetInterruptHandler(void(*RGB_Handler)(void)){
+    if(TMR1_RGB_Handler == NULL){
+        TMR1_RGB_Handler = RGB_Handler; 
+    }
+}
 
 void __attribute__ ( ( interrupt, no_auto_psv ) ) _T1Interrupt (  )
 {
     /* Check if the Timer Interrupt/Status is set */
 
     //***User Area Begin
-
+    rgb_cyc.cycle_tmr++;
+    if(rgb_cyc.cycle_tmr >= RGB_CLOCK){
+        rgb_cyc.cycle_tmr = 0;
+        if(TMR1_RGB_Handler){
+            TMR1_RGB_Handler();
+        }
+    }
     // ticker function call;
     // ticker is 1 -> Callback function gets called everytime this ISR executes
     if(TMR1_InterruptHandler) 
