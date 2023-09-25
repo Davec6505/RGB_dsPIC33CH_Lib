@@ -7,6 +7,8 @@
 #include "../../XC_GFX_Lib/GFX_Lib.X/GFX.h"
 #include "../../XC_GFX_Lib/GFX_Lib.X/Fonts.h"
 
+#define TOP_MASK 0xFE3F
+#define BOT_MASK 0xF1FF
 
 #define  RowA _LATA0
 #define  RowB _LATA1
@@ -20,7 +22,7 @@
 #define  SR_B2 _LATB11
 
 pixSwitch pixState;//enum for pixel on or off condition
-P6_Var P6V;
+volatile P6_Var P6V;
 _RGB RGB;
 
 struct FontArr fontInfo;
@@ -45,10 +47,11 @@ void initP10(uint8_t wide){
 
 ////////////////////////////////////////////////////////////////////////////////
 //interrupt handler interrupts must be turned on to allow buffer setup
-void Int_Handler(){
+void Int_Handler(void){
 static uint8_t i1;
       i1 = 0;
-      //DisableInterrupts();
+      __builtin_disable_interrupts();
+      TMR1_Test_SetLow();
       while(i1 < 16){
            for(iX=0;iX<64;iX++){     //iX = 32 leds wide
                writeData(P6V.P_Vram[0][iX+(i1*64)],P6V.P_Vram[0][(iX+(i1*64))+1024]);
@@ -58,27 +61,28 @@ static uint8_t i1;
                toggle_SCLK_Inv();
                #endif
            }
-         //  latchLeds(i1++);
+           latchLeds(i1++);
 
       }
-      //EnableInterrupts();
+      TMR1_Test_SetHigh();
+      __builtin_enable_interrupts();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 //write the DATA to the shift register MSB first
-void writeData(unsigned char Dat_T,unsigned char Dat_B){
+void writeData(uint8_t Dat_T,uint8_t Dat_B){
 //static int16_t iDat;
 
-      if(Dat_T & 0x07){
-           LATB  = (LATB & 0xFFF8)| (int)Dat_T;// P6V.Data_Top_RGB;
+      if(Dat_T & 0x7){
+           LATB  = (LATB & TOP_MASK)| ((uint16_t)Dat_T << 6);// P6V.Data_Top_RGB;
       }
       else
-           LATB  = LATB & 0xFFF8;
+           LATB  = LATB & TOP_MASK;
 
      if(Dat_B & 0x38)
-           LATB  = (LATB & 0xFFC7)| (int)Dat_B;  //check if Dat MSB is high
+           LATB  = (LATB & BOT_MASK)| ((uint16_t)Dat_B << 6);  //check if Dat MSB is high
      else 
-           LATB  = LATB & 0xFFC7;
+           LATB  = LATB & BOT_MASK;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -118,10 +122,12 @@ int xOffSet;
 //Latch Leds to output of SR
 void latchLeds(uint8_t yClk){
     OE_disable(); //=1
-    rowSelectUnConventional(yClk);
-    #ifdef UnconventionalRow
+    
+   #ifdef RowSelectUnconventional
+     rowSelectUnConventional(yClk);
      toggle_RCLK();
-    #else
+   #else
+     rowSelectConventional(yClk);
      toggle_RCLK_Inv();
    #endif
     OE_enable(); //=0
@@ -362,7 +368,7 @@ uint8_t index = 0;
 //Scrolling a message
 void ScrollMsg(char *msg){
 uint16_t msg_pixel_len, scroll_1,scroll_2,start_char;//,len;
-uint8_t first_char_width,i;
+uint8_t first_char_width = 0,i;
 char temp_string[30];
 
      msg_pixel_len = strlen(msg);
@@ -408,7 +414,7 @@ static uint16_t x,_x,fx,y;//length,_fx,_y;
 }
 ////////////////////////////////////////////////////////////////////////////////
 //Draw square
-void DRAW_Rect(unsigned int x0,unsigned int y0,unsigned int x1,unsigned int y1,type t){
+void DRAW_Rect(uint16_t x0,uint16_t y0,uint16_t x1,uint16_t y1,type t){
 unsigned int i,y;
  if(y0+y1>(GFX_SCREEN_HEIGHT-1) || y0 < 0 || x0+x1>(GFX_SCREEN_WIDTH-1) || x0<0)return;
  if(t == FILL){
@@ -430,7 +436,7 @@ unsigned int i,y;
 }
 ////////////////////////////////////////////////////////////////////////////////
 //Draw a line
-void DRAW_Line(unsigned int x0,unsigned int y0,unsigned int x1,unsigned int y1){
+void DRAW_Line(uint16_t x0,uint16_t y0,uint16_t x1,uint16_t y1){
  int p,p0,x,y,k,Dx,Dy,steps;
  //char *C;
   Dx = abs(x1-x0);
@@ -496,7 +502,7 @@ void runPixSeq(){
 //static uint8_t Dat;
 static uint16_t iXX,Row,temp;//,Cnt;
 
-if(Row > 30){
+if(Row > 31){
      Row = 0;
 /*iXX = 0;*/
   }
@@ -507,7 +513,7 @@ if(Row > 30){
   }
 
   if(Row < 16)temp = Row; //16 rows per panel
-  else temp =  Row - 15;
+  else temp =  Row - 16;
 
  // rowSelect(temp);
   for(iX=0;iX<64;iX++){     //iX = 64 leds wide
@@ -518,12 +524,12 @@ if(Row > 30){
      }else{
         SR_R1 = 0;SR_G1 = 0;SR_B1 = 0; //databits
         SR_R2 = 0;SR_G2 = 0;SR_B2 = 0; //databits
-      }
-     toggle_SCLK();        //toggle each bit into SR
+     }   
+     toggle_SCLK();        
   }
   iXX++;
   latchLeds(temp);
-  DELAY_milliseconds(10);
+ // DELAY_milliseconds(10);
 }
 ////////////////////////////////////////////////////////////////////////////////
 //string function
