@@ -22,7 +22,7 @@
 
 #define GFX_CHAR_SPACING   1
 
-//#define UnconventionalRow
+#define RowSelectUnconventional
 //#define NEW_SCREEN_ISR
 
 ////////////////////////////////////////////////
@@ -40,10 +40,12 @@ extern volatile uint16_t half_screen;
 //structs and enums
 typedef enum pixelState{pixOff,pixOn}pixSwitch;
 extern  pixSwitch pixState;
+
 typedef enum Type{CHAR=-1,STRING=1,PIC=2,FILL,NOFILL}type;
 extern type C_S;
 
 typedef enum RGB_{
+  none = -1,
   black = 0,
   red ,
   green,
@@ -51,22 +53,21 @@ typedef enum RGB_{
   blue,
   magenta,
   cyan,
-  white,
-  none
+  white
 }_RGB;
 extern _RGB RGB;
 
 typedef struct p6{
-  unsigned short Data_Top_RGB;
-  unsigned short Data_Top;
-  unsigned short Data_Bot_RGB;
-  unsigned short Data_Bot;
-  unsigned short noOfPanelWide;
-  unsigned short noOfPanelDeep;
-  unsigned int bufferSize;
-  unsigned short P_Vram[2][2048]; //64 as (8*8=32)
+  uint8_t Data_Top_RGB;
+  uint8_t Data_Top;
+  uint8_t Data_Bot_RGB;
+  uint8_t Data_Bot;
+  uint8_t noOfPanelWide;
+  uint8_t noOfPanelDeep;
+  uint16_t bufferSize;
+  uint8_t P_Vram[2][2048]; //64 as (8*8=32)
 }P6_Var;
-extern P6_Var P6V;
+extern volatile P6_Var P6V;
 
 
 ///////////////////////////////////////////////
@@ -79,8 +80,8 @@ extern unsigned char Letter;
 //function prototypes
 
 void initP10(uint8_t wide);
-void Int_Handler();
-void writeData(unsigned char Dat_T,unsigned char Dat_B);
+void Int_Handler(void);
+void writeData(uint8_t Dat_T,uint8_t Dat_B);
 void BlkSelect(uint8_t ch);
 void latchLeds(uint8_t yClk);
 void runPixSeq();
@@ -109,8 +110,8 @@ int16_t GFXGetStringWidthN( char *string,uint8_t n);
 int8_t CharIndexOfPixel( char *string, uint16_t pixel);
 void ScrollMsg(char *msg);
 void fillPicture(const uint8_t *Pict);
-void DRAW_Rect(unsigned int x0,unsigned int y0,unsigned int x1,unsigned int y1,type t);
-void DRAW_Line(unsigned int x0,unsigned int y0,unsigned int x1,unsigned int y1);
+void DRAW_Rect(uint16_t x0,uint16_t y0,uint16_t x1,uint16_t y1,type t);
+void DRAW_Line(uint16_t x0,uint16_t y0,uint16_t x1,uint16_t y1);
 void fillTop();
 void fillBot();
 void fillPix();

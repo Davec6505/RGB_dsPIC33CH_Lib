@@ -159,7 +159,6 @@ void SYSTEM_Initialize(void)
     INTERRUPT_Initialize();
     CLOCK_Initialize();
     TMR1_Initialize();
-    RGB_SetInterruptHandler(Int_Handler);
     INTERRUPT_GlobalEnable();
     SYSTEM_CORCONModeOperatingSet(CORCON_MODE_PORVALUES);
 }

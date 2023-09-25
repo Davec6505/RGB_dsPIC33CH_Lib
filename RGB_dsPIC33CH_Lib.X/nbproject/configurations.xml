@@ -25,6 +25,7 @@
       </logicalFolder>
       <logicalFolder name="f1" displayName="RGB" projectFiles="true">
         <itemPath>RGB.h</itemPath>
+        <itemPath>utilities.h</itemPath>
       </logicalFolder>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
@@ -55,6 +56,7 @@
       </logicalFolder>
       <logicalFolder name="f1" displayName="RGB" projectFiles="true">
         <itemPath>RGB.c</itemPath>
+        <itemPath>utilities.c</itemPath>
       </logicalFolder>
       <itemPath>main.c</itemPath>
     </logicalFolder>
@@ -73,7 +75,7 @@
         <targetDevice>dsPIC33CH128MP502</targetDevice>
         <targetHeader></targetHeader>
         <targetPluginBoard></targetPluginBoard>
-        <platformTool>noID</platformTool>
+        <platformTool>ICD3PlatformTool</platformTool>
         <languageToolchain>XC16</languageToolchain>
         <languageToolchainVersion>2.10</languageToolchainVersion>
         <platform>3</platform>
@@ -113,6 +115,10 @@
           <alternateLoadableFile></alternateLoadableFile>
         </loading>
         <subordinates>
+          <score>
+            <scdebug>false</scdebug>
+            <scname>S1</scname>
+          </score>
         </subordinates>
       </compileType>
       <makeCustomizationType>
@@ -136,16 +142,16 @@
         <property key="enable-ansi-warnings" value="false"/>
         <property key="enable-fatal-warnings" value="false"/>
         <property key="enable-large-arrays" value="false"/>
-        <property key="enable-omit-frame-pointer" value="false"/>
+        <property key="enable-omit-frame-pointer" value="true"/>
         <property key="enable-procedural-abstraction" value="false"/>
         <property key="enable-short-double" value="false"/>
         <property key="enable-symbols" value="true"/>
-        <property key="enable-unroll-loops" value="false"/>
+        <property key="enable-unroll-loops" value="true"/>
         <property key="expand-pragma-config" value="false"/>
         <property key="extra-include-directories" value=""/>
         <property key="isolate-each-function" value="false"/>
-        <property key="keep-inline" value="false"/>
-        <property key="oXC16gcc-align-arr" value="false"/>
+        <property key="keep-inline" value="true"/>
+        <property key="oXC16gcc-align-arr" value="true"/>
         <property key="oXC16gcc-cnsts-mauxflash" value="false"/>
         <property key="oXC16gcc-data-sects" value="false"/>
         <property key="oXC16gcc-errata" value=""/>
@@ -159,7 +165,7 @@
         <property key="oXC16gcc-sfr-warn" value="false"/>
         <property key="oXC16gcc-smar-io-lvl" value="1"/>
         <property key="oXC16gcc-smart-io-fmt" value=""/>
-        <property key="optimization-level" value="0"/>
+        <property key="optimization-level" value="2"/>
         <property key="post-instruction-scheduling" value="default"/>
         <property key="pre-instruction-scheduling" value="default"/>
         <property key="preprocessor-macros" value=""/>

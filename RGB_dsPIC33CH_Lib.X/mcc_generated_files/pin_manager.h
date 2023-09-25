@@ -809,7 +809,7 @@
     </code>
 
 */
-#define B2_Toggle()           (_LATB1 ^= 1)
+#define B2_Toggle()           (_LATB11 ^= 1)
 /**
   @Summary
     Reads the value of the GPIO pin, RB11.
@@ -1322,6 +1322,152 @@
 
 */
 #define OE_SetDigitalOutput() (_TRISB4 = 0)
+/**
+  @Summary
+    Sets the GPIO pin, RB5, high using LATB5.
+
+  @Description
+    Sets the GPIO pin, RB5, high using LATB5.
+
+  @Preconditions
+    The RB5 must be set to an output.
+
+  @Returns
+    None.
+
+  @Param
+    None.
+
+  @Example
+    <code>
+    // Set RB5 high (1)
+    TMR1_Test_SetHigh();
+    </code>
+
+*/
+#define TMR1_Test_SetHigh()          (_LATB5 = 1)
+/**
+  @Summary
+    Sets the GPIO pin, RB5, low using LATB5.
+
+  @Description
+    Sets the GPIO pin, RB5, low using LATB5.
+
+  @Preconditions
+    The RB5 must be set to an output.
+
+  @Returns
+    None.
+
+  @Param
+    None.
+
+  @Example
+    <code>
+    // Set RB5 low (0)
+    TMR1_Test_SetLow();
+    </code>
+
+*/
+#define TMR1_Test_SetLow()           (_LATB5 = 0)
+/**
+  @Summary
+    Toggles the GPIO pin, RB5, using LATB5.
+
+  @Description
+    Toggles the GPIO pin, RB5, using LATB5.
+
+  @Preconditions
+    The RB5 must be set to an output.
+
+  @Returns
+    None.
+
+  @Param
+    None.
+
+  @Example
+    <code>
+    // Toggle RB5
+    TMR1_Test_Toggle();
+    </code>
+
+*/
+#define TMR1_Test_Toggle()           (_LATB5 ^= 1)
+/**
+  @Summary
+    Reads the value of the GPIO pin, RB5.
+
+  @Description
+    Reads the value of the GPIO pin, RB5.
+
+  @Preconditions
+    None.
+
+  @Returns
+    None.
+
+  @Param
+    None.
+
+  @Example
+    <code>
+    uint16_t portValue;
+
+    // Read RB5
+    postValue = TMR1_Test_GetValue();
+    </code>
+
+*/
+#define TMR1_Test_GetValue()         _RB5
+/**
+  @Summary
+    Configures the GPIO pin, RB5, as an input.
+
+  @Description
+    Configures the GPIO pin, RB5, as an input.
+
+  @Preconditions
+    None.
+
+  @Returns
+    None.
+
+  @Param
+    None.
+
+  @Example
+    <code>
+    // Sets the RB5 as an input
+    TMR1_Test_SetDigitalInput();
+    </code>
+
+*/
+#define TMR1_Test_SetDigitalInput()  (_TRISB5 = 1)
+/**
+  @Summary
+    Configures the GPIO pin, RB5, as an output.
+
+  @Description
+    Configures the GPIO pin, RB5, as an output.
+
+  @Preconditions
+    None.
+
+  @Returns
+    None.
+
+  @Param
+    None.
+
+  @Example
+    <code>
+    // Sets the RB5 as an output
+    TMR1_Test_SetDigitalOutput();
+    </code>
+
+*/
+#define TMR1_Test_SetDigitalOutput() (_TRISB5 = 0)
 /**
   @Summary
     Sets the GPIO pin, RB6, high using LATB6.

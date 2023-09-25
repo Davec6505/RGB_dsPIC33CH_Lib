@@ -1,0 +1,1 @@
+ -c -mcpu=$(MP_PROCESSOR_OPTION)      -mno-eds-warn  -g -omf=elf -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O2 -funroll-loops -fomit-frame-pointer -falign-arrays -msmart-io=1 -Wall -msfr-warn=off -finline   -mdfp="${DFP_DIR}/xc16"C:\Users\Git\RGB_dsPIC33CH_Lib\RGB_dsPIC33CH_Lib.X\mcc_generated_files\clock.c
